@@ -1,14 +1,4 @@
 # AI-Powered-Sportswear-Sales-Assistant-Telegram-n8n-
-#ai-sportswear-assistant/
-│
-├── README.md
-├── workflow.json            ← ملف n8n export
-├── product_catalog_sample.csv
-├── customer_orders_sample.csv
-├── email_template.html
-└── screenshots/
-    ├── telegram_chat.png
-    ├── n8n_workflow_view.png
 
 # 🤖 AI-Powered Sportswear Sales Assistant (Telegram + n8n)
 
@@ -65,3 +55,14 @@ Once the customer confirms, the bot:
 
 [Yousef Abdelnasser](https://www.linkedin.com/in/youssef-abdalnasser-33705b262/) – AI & Automation Developer  
 Open to collaboration and feedback!
+
+#ai-sportswear-assistant/
+│
+├── README.md
+├── workflow.json            ← ملف n8n export
+├── product_catalog_sample.csv
+├── customer_orders_sample.csv
+├── email_template.html
+└── screenshots/
+    ├── telegram_chat.png
+    ├── n8n_workflow_view.png
