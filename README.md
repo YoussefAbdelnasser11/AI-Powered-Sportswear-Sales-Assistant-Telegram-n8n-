@@ -1,5 +1,5 @@
 # AI-Powered-Sportswear-Sales-Assistant-Telegram-n8n-
-ai-sportswear-assistant/
+#ai-sportswear-assistant/
 │
 ├── README.md
 ├── workflow.json            ← ملف n8n export
