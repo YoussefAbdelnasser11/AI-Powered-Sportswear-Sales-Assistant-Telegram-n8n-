@@ -1,0 +1,285 @@
+{
+  "name": "SportifyBot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -280
+      ],
+      "id": "7e875ead-2732-40a4-9c11-8dd8d6b6a638",
+      "name": "Telegram Trigger",
+      "webhookId": "cd05ed8c-d9e4-4403-932e-6cb3747d0515",
+      "credentials": {
+        "telegramApi": {
+          "id": "AroafuWwHp98L2eC",
+          "name": "Sportify Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=response to this message  {{ $json.message.text }} from {{ $json.message.chat.first_name }}",
+        "options": {
+          "systemMessage": "=\n🔧 Role:\nYou are a smart, helpful, and friendly AI assistant working for a sportswear shop based in Egypt. Your job is to assist customers in browsing products, checking prices, and placing orders. You always reply in clear, polite English, and keep your messages short and informative.\n\n🛒 Product Categories:\nThe store sells a range of high-quality sportswear items:\n- T-shirts\n- Hoodies\n- Leggings\n- Sports Bras\n- Shorts\n- Tank Tops\n- Jackets\n\nProducts come in sizes XS to XL and colors like black, blue, grey, navy, olive, pink, and more.\n\n📊 Sheets You Use:\n1. **Product Catalog (Sheet 1)**  \n   Use this sheet to get product details including name, price, category, sizes, colors, stock, and image URL.\n\n2. **Customer Orders (Sheet 2)**  \n   Use this sheet to store each confirmed order with:\n   - Order ID (generated)\n   - Customer Name\n   - Product Name\n   - Size\n   - Color\n   - Quantity\n   - Payment Method\n   - Delivery Address (Egypt only)\n   - Email\n   - Phone Number\n   - Order Status (“Processing”)\n   - Order Date\n\n📦 When a Customer Wants to Place an Order:\nKindly collect the following:\n1. Full Name  \n2. Product Name  \n3. Size  \n4. Color  \n5. Quantity  \n6. Delivery Address (inside Egypt)  \n7. Phone Number  \n8. Email Address  \n9. Payment Method (Cash on Delivery, Credit Card, or PayPal)\n\n🧾 Once all info is collected:\n- Confirm the order clearly and only once.  \n- Add the order to the **Customer Orders sheet**.  \n- Send a confirmation email to the customer including:\n  - Product name, size, color, quantity  \n  - Total price and payment method  \n  - Delivery address  \n  - Estimated delivery time (2–4 business days)\n\n📧 Email Template:\nSubject: ✅ Your Sportswear Order Has Been Confirmed!\n\nBody:\nHi [Customer Name],  \nThank you for your order from [Your Shop Name]!  \nHere’s a summary of your order:\n\n- Product: [Product Name]  \n- Size: [Size]  \n- Color: [Color]  \n- Quantity: [Quantity]  \n- Total Price: [Total Price]  \n- Delivery Address: [Address]  \n- Payment Method: [Method]  \n- Estimated Delivery: 2–4 working days\n\nIf you have any questions, feel free to reply.  \nThank you for shopping with us!\n\n🤝 After sending the confirmation:\nAlways end the conversation with a kind, helpful tone. For example:\n\n\"Thanks for using our store! 🙌  \nYour order has been confirmed and is on its way.  \nIs there anything else I can help you with? 😊\"\n\n🚫 Do not repeat the confirmation message. Only send it once.  \n🟢 Wait for the customer’s next request before proceeding further.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -280
+      ],
+      "id": "d9694d7b-ad42-4026-adf3-dfbdea6202a8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -60,
+        -100
+      ],
+      "id": "2011b3d3-9773-4e36-bb5e-5ccd93f5560b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -280
+      ],
+      "id": "003a58c9-2341-4a8f-8cec-78d9b1b4b46f",
+      "name": "Telegram",
+      "webhookId": "7ae28a3c-6c78-4e87-b6d3-f8f8b7ab4a1d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AroafuWwHp98L2eC",
+          "name": "Sportify Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -100
+      ],
+      "id": "9195c7d0-d3ef-4eae-99d3-2d35e831be0b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xF93nk3bbJDt0PmJ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "125ZrQoUFaWxrc7G1Y0QUdaw00OLm49rZAKh5aFv5_lM",
+          "mode": "list",
+          "cachedResultName": "Sportify products info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125ZrQoUFaWxrc7G1Y0QUdaw00OLm49rZAKh5aFv5_lM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125ZrQoUFaWxrc7G1Y0QUdaw00OLm49rZAKh5aFv5_lM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        60,
+        -100
+      ],
+      "id": "171d069f-494b-4c43-ad12-0d1a88fe2cff",
+      "name": "products info",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qJotOI9YPio7Jcky",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=youssef.abdalnasser.54@gmail.com",
+        "subject": "hi",
+        "message": "ok",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        -100
+      ],
+      "id": "808661ef-86d4-4591-b8bd-b70e4e1d0f4a",
+      "name": "Gmail1",
+      "webhookId": "6c76019a-1ec1-45d1-9e20-a2f226d7538e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZEh9k0PrANPxB0e1",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1r5_Np3RWVJtPKBGg3zVFCtTY92SnapmE2LLBWgcVbl4",
+          "mode": "list",
+          "cachedResultName": "Sportify customer orders ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r5_Np3RWVJtPKBGg3zVFCtTY92SnapmE2LLBWgcVbl4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r5_Np3RWVJtPKBGg3zVFCtTY92SnapmE2LLBWgcVbl4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        180,
+        -100
+      ],
+      "id": "5c57719e-5162-4275-ab6b-4cf5c5231b87",
+      "name": "orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qJotOI9YPio7Jcky",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "products info": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "orders": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ec85361a-8ce7-480e-bc60-47ea65d15f0a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "42b296de8e6ed15d232925b66cd240f8d57407dac024b16a8ff33774eeff0de4"
+  },
+  "id": "WyVStiGpbcwQIOpy",
+  "tags": []
+}
